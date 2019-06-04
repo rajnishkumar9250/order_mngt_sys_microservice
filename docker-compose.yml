@@ -86,8 +86,6 @@ services:
     volumes:
       - db-data:/data/db
       - log-data:/edgex/logs
-    extra_hosts:
-      - "ordermgt-kafka-broker:192.168.1.6"
     depends_on:
       - mongo
     
@@ -102,8 +100,6 @@ services:
     volumes:
       - db-data:/data/db
       - log-data:/edgex/logs
-    #extra_hosts:
-    #  - "ordermgt-kafka-broker:192.168.1.6"
     depends_on:
       - mongo
       - kafka
