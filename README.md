@@ -7,6 +7,9 @@ docker-compose.yml file is there.
 
 docker-compose up -d
 
+Once, all microservices are started, please navigate browser to localhost:8080 . It will redirect to swagger ui documentation.
+
+
 Notification: Make sure mongodb and kafka service is not running , because we are using these services. If any microservices are
 not started properly, then please down the all microservice and start again. please follow below command
 
