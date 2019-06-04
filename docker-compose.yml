@@ -1,0 +1,114 @@
+# /*******************************************************************************
+#  * Copyright 2018 Dell Inc.
+#  *
+#  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+#  * in compliance with the License. You may obtain a copy of the License at
+#  *
+#  * http://www.apache.org/licenses/LICENSE-2.0
+#  *
+#  * Unless required by applicable law or agreed to in writing, software distributed under the License
+#  * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+#  * or implied. See the License for the specific language governing permissions and limitations under
+#  * the License.
+#  *
+#  * @author: Jim White, Dell
+#  * EdgeX Foundry, California version, 0.6.0
+#  * added: Jul 2, 2018
+#  *******************************************************************************/
+
+version: '3'
+volumes:
+  db-data:
+  log-data:
+
+services:
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"
+    container_name: ordermgt-mongo
+    hostname: ordermgt-mongo
+    networks:
+      - ordermgt-network
+    volumes:
+      - db-data:/data/db
+      - log-data:/data/logs
+      
+  zookeeper:
+    image: wurstmeister/zookeeper:3.4.6
+    expose:
+    - "2181"
+    container_name: ordermgt-zookeeper
+    hostname: ordermgt-zookeeper
+    networks:
+      - ordermgt-network
+    
+  kafka:
+    image: wurstmeister/kafka:2.11-2.0.0
+    ports:
+      - "9092:9092"
+    container_name: ordermgt-kafka-broker
+    hostname: ordermgt-kafka-broker
+    networks:
+      - ordermgt-network
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://192.168.1.6:9092
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_ZOOKEEPER_CONNECT: ordermgt-zookeeper:2181
+    depends_on:
+    - zookeeper
+    
+  gateway:
+    image: rajnishkumar9250/nokia_gateway:1.0.0
+    ports:
+      - "8080:8080"
+    container_name: ordermgt-gateway
+    hostname: ordermgt-gateway
+    networks:
+      - ordermgt-network
+    volumes:
+      - db-data:/data/db
+      - log-data:/edgex/logs
+    depends_on:
+      - kafka
+      - product
+      - order
+    
+
+  product:
+    image: rajnishkumar9250/nokia_product:1.0.0
+    ports:
+        - "3000:3000"
+    container_name: ordermgt-product
+    hostname: ordermgt-product
+    networks:
+      - ordermgt-network
+    volumes:
+      - db-data:/data/db
+      - log-data:/edgex/logs
+    extra_hosts:
+      - "ordermgt-kafka-broker:192.168.1.6"
+    depends_on:
+      - mongo
+    
+  order:
+    image: rajnishkumar9250/nokia_order:1.0.0
+    ports:
+        - "3001:3001"
+    container_name: ordermgt-order
+    hostname: ordermgt-order
+    networks:
+      - ordermgt-network
+    volumes:
+      - db-data:/data/db
+      - log-data:/edgex/logs
+    #extra_hosts:
+    #  - "ordermgt-kafka-broker:192.168.1.6"
+    depends_on:
+      - mongo
+      - kafka
+    
+networks:
+  ordermgt-network:
+    driver: "bridge"
+...

@@ -1,0 +1,189 @@
+{
+    "swagger":"2.0",
+    "info":{
+        "description":"This is a sample server Petstore server.  You can find out more about Swagger at [http://swagger.io](http://swagger.io) or on [irc.freenode.net, #swagger](http://swagger.io/irc/).  For this sample, you can use the api key `special-key` to test the authorization filters.",
+        "version":"1.0.0",
+        "title":"Swagger Order Management System",
+        "termsOfService":"http://swagger.io/terms/",
+        "contact":{
+            "email":"apiteam@swagger.io"
+        },
+        "license":{
+            "name":"Apache 2.0",
+            "url":"http://www.apache.org/licenses/LICENSE-2.0.html"
+        }
+    },
+    "host":"localhost:8080",
+    "basePath":"/v1",
+    "schemes":["http"],
+    "paths":{
+        "/product/add":{
+            "post":{
+                "tags":["product"],
+                "summary":"Add a new product to the store",
+                "description":"",
+                "operationId":"addProduct",
+                "consumes":["application/json"],
+                "produces":["application/json"],
+                "parameters":[
+                    {
+                        "in":"body",
+                        "name":"body",
+                        "description":"Product object that needs to be added to the store",
+                        "required":true,
+                        "schema":{"$ref":"#/definitions/Product"}
+                    }
+                ],
+                "responses":{
+                    "405":{
+                        "description":"Invalid input"
+                    }
+                }
+            }
+        },
+        "/order/create":{
+            "post":{
+                "tags":["order"],
+                "summary":"Create an order to the store",
+                "description":"",
+                "operationId":"createOrder",
+                "consumes":["application/json"],
+                "produces":["application/json"],
+                "parameters":[
+                    {
+                        "in":"body",
+                        "name":"body",
+                        "description":"Product object that needs to be added to the store",
+                        "required":true,
+                        "schema":{"$ref":"#/definitions/Order"}
+                    }
+                ],
+                "responses":{
+                    "405":{
+                        "description":"Invalid input"
+                    }
+                }
+            }
+        },
+         "/order/shippedorder":{
+            "post":{
+                "tags":["order"],
+                "summary":"Shipped an order to the store",
+                "description":"",
+                "operationId":"shippedOrder",
+                "consumes":["application/json"],
+                "produces":["application/json"],
+                "parameters":[
+                    {
+                        "in":"body",
+                        "name":"body",
+                        "description":"Product object that needs to be added to the store",
+                        "required":true,
+                        "schema":{
+                            "type":"object",
+                            "properties":{
+                                "orderId":{
+                                    "type":"string"
+                                }
+                            }
+                            
+                        }
+                    }
+                ],
+                "responses":{
+                    "405":{
+                        "description":"Invalid input"
+                    }
+                }
+            }
+        }
+       
+    },
+    "definitions":{
+         "Address":{
+            "type":"object",
+            "properties":{
+                "firstName":{"type":"string"},
+                "lastName":{"type":"string"},
+                "email":{"type":"string"},
+                "phone":{"type":"string"},
+                "address":{
+                    "type":"string"
+                }
+            },
+            "xml":{
+                "name":"User"
+            }
+        },
+        "Product":{
+            "type":"object",
+            "required":["name","skew_code"],
+            "properties":{                
+                "name":{
+                    "type":"string",
+                    "example":"doggie"
+                },
+                "skew_code":{
+                    "type":"string",
+                    "example":"HSN1234"
+                },
+                "brand_name":{
+                    "type":"string",
+                    "example":"NOKIA"
+                },
+                "quantity":{
+                    "type":"integer",
+                    "example": 10
+                }
+            },
+            "xml":{
+                "name":"Product"
+            }
+        },
+         "Order":{
+            "type":"object",
+            "required":["orderId","totalPrice", "quantity"],
+            "properties":{                
+                "productId":{
+                    "type":"string",
+                    "example":"doggie"
+                },
+                "quantity":{
+                    "type":"integer",
+                    "example": 10,
+                    "minimum": 0,
+                    "maximum": 20
+                },
+                "totalPrice":{
+                    "type":"number",
+                    "example":200
+                },
+                "address":{
+                    "$ref":"#/definitions/Address"
+                }
+            },
+            "xml":{
+                "name":"Order"
+            }
+        },
+        "ApiResponse":{
+            "type":"object",
+            "properties":{
+                "code":{
+                    "type":"integer",
+                    "format":"int32"
+                },
+                "type":{
+                    "type":"string"
+                },
+                "message":{
+                    "type":"string"
+                }
+            }
+        }
+    },
+    "externalDocs":{
+        "description":"Find out more about Swagger",
+        "url":"http://swagger.io"
+    }
+}
